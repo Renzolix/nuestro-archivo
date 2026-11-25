@@ -244,15 +244,15 @@
         }
 
         /* Estilo Polaroid dentro de la tarjeta */
-        .polaroid-img {
-            width: 100%;
-            height: 190px;
-            object-fit: cover;
-            object-position: center top;
-            border-radius: 10px;
-            border: 4px solid #fff;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            transform: rotate(-1.5deg);
+       .polaroid-img {
+    width: 100%;
+    height: 190px;
+    object-fit: contain;
+    background-color: #fdf8f5;
+    border-radius: 10px;
+    border: 4px solid #fff;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    transform: rotate(-1.5deg);
         }
 
         .flip-card-back p {
@@ -351,18 +351,18 @@
         </section>
 
         <!-- 3. 4 RAZONES POR LAS QUE ME ENCANTÁS -->
-        <h2 class="section-title">4 razones por las que me encantás ✨</h2>
+        <h2 class="section-title">4 razones por las que me encantás </h2>
         <div class="cards-grid">
             <!-- MES 1 -->
             <div class="flip-card" onclick="this.classList.toggle('flipped')">
                 <div class="flip-card-inner">
                     <div class="flip-card-front">
-                        <h3>Mes 1</h3>
+                        <h3>La 1</h3>
                         <p>(Tocá para dar vuelta)</p>
                     </div>
                     <div class="flip-card-back">
                         <img src="foto1.jpeg" alt="Mes 1" class="polaroid-img">
-                        <p><strong>Tu risa:</strong> Desde el 25 de julio supe que hacerte reír iba a ser mi plan favorito.</p>
+                        <p><strong>Tu sonrisa:</strong> Desde el 25 de julio supe que tu hermosa sonrisa iba a ser mi cosa favorita.</p>
                     </div>
                 </div>
             </div>
@@ -371,12 +371,12 @@
             <div class="flip-card" onclick="this.classList.toggle('flipped')">
                 <div class="flip-card-inner">
                     <div class="flip-card-front">
-                        <h3>Mes 2</h3>
+                        <h3>La 2</h3>
                         <p>(Tocá para dar vuelta)</p>
                     </div>
                     <div class="flip-card-back">
                         <img src="foto2.jpeg" alt="Mes 2" class="polaroid-img">
-                        <p><strong>Cómo me escuchás:</strong> Amo cómo podemos hablar horas de cualquier cosa sin darnos cuenta.</p>
+                        <p><strong>Nuestras charlas:</strong> Me gusta cómo podemos hablar de cualquier cosa y no cansarme nunca.</p>
                     </div>
                 </div>
             </div>
@@ -385,7 +385,7 @@
             <div class="flip-card" onclick="this.classList.toggle('flipped')">
                 <div class="flip-card-inner">
                     <div class="flip-card-front">
-                        <h3>Mes 3</h3>
+                        <h3>La 3</h3>
                         <p>(Tocá para dar vuelta)</p>
                     </div>
                     <div class="flip-card-back">
@@ -399,12 +399,12 @@
             <div class="flip-card" onclick="this.classList.toggle('flipped')">
                 <div class="flip-card-inner">
                     <div class="flip-card-front">
-                        <h3>Mes 4</h3>
+                        <h3>La 4</h3>
                         <p>(Tocá para dar vuelta)</p>
                     </div>
                     <div class="flip-card-back">
                         <img src="foto4.jpeg" alt="Mes 4" class="polaroid-img">
-                        <p><strong>Lo que construimos:</strong> Cada día me gustás un poquito más que el anterior. ¡Feliz Vol. 4!</p>
+                        <p><strong>Lo que sos:</strong> Cada día me gustás un popito más que el anterior. Te amo <3</p>
                     </div>
                 </div>
             </div>
@@ -436,14 +436,14 @@
 
         // 3. Frases aleatorias para el botón
         const QUOTES = [
-            "Vale por unos mates en el parque cuando quieras 🧉",
-            "Acordate de lo hermosa que sos (por dentro y por fuera) ✨",
-            "Mandame un mensaje y voy corriendo a darte un abrazo 🫂",
-            "Vale por una noche de pelis y algo rico para comer 🍕",
+            "Vale por una tarde de no hacer nada en el sillón",
+            "Acordate de lo hermosa que sos (vos entera)",
+            "Mandame un mensaje y voy corriendo a darte un abrazo",
+            "Vale por una tarde o noche o cuando sea de pelis (aunque no las veamos jajajs)",
             "Sos mi persona favorita en el mundo ❤️",
-            "Si estás teniendo un día pesado, respirá: acá estoy para vos.",
-            "Vale por un beso gigante apenas nos veamos 😘",
-            "Gracias por estos 4 meses tan lindos juntos."
+            "Siempre que te sientas mal, ahí voy a estar para vos :)",
+            "Vale por un beso gigante (o varios) apenas nos veamos",
+            "Gracias por estos 4 meses tan lindos juntos. Te Amo"
         ];
 
         // --- LÓGICA DEL ACERTIJO ---
