@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuestro pequeño archivo (Vol. 4)</title>
+    <!-- Tipografías limpias de Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    <!-- Librería ligera para el confeti al desbloquear -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <style>
+        :root {
+            --bg-color: #fdf8f5;
+            --card-front: #ffffff;
+            --card-back: #ffccd5;
+            --accent: #e56b6f;
+            --accent-hover: #d45559;
+            --text-main: #4a4e69;
+            --text-light: #7a7e9a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        /* --- 1. PANTALLA DE BLOQUEO --- */
+        #lock-screen {
+            position: fixed;
+            inset: 0;
+            background-color: var(--bg-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 1000;
+            text-align: center;
+            transition: opacity 0.6s ease, visibility 0.6s ease;
+        }
+
+        #lock-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .lock-box {
+            background: white;
+            padding: 2.5rem 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(229, 107, 111, 0.15);
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .lock-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        .lock-box input {
+            width: 100%;
+            padding: 12px 15px;
+            margin: 15px 0;
+            border: 2px solid #eee;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 1rem;
+            text-align: center;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .lock-box input:focus {
+            border-color: var(--accent);
+        }
+
+        .btn {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 12px;
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+
+        .btn:hover {
+            background-color: var(--accent-hover);
+            transform: scale(1.03);
+        }
+
+        #error-msg {
+            color: #d90429;
+            font-size: 0.85rem;
+            margin-top: 10px;
+            display: none;
+        }
+
+        /* --- CONTENIDO PRINCIPAL --- */
+        #main-content {
+            max-width: 850px;
+            margin: 0 auto;
+            padding: 40px 20px 80px;
+            display: none;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        header h1 {
+            font-size: 2.2rem;
+            color: var(--accent);
+            margin-bottom: 8px;
+        }
+
+        /* --- 2. CONTADOR EN TIEMPO REAL --- */
+        .counter-section {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.04);
+            margin-bottom: 50px;
+        }
+
+        .counter-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .time-box {
+            background: var(--bg-color);
+            padding: 15px 5px;
+            border-radius: 14px;
+        }
+
+        .time-box span {
+            display: block;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent);
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        .time-box small {
+            color: var(--text-light);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        /* --- 3. FLIP CARDS (4 MESES) --- */
+        .section-title {
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 1.5rem;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 25px;
+            margin-bottom: 60px;
+        }
+
+        .flip-card {
+            background-color: transparent;
+            height: 360px;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.7s;
+            transform-style: preserve-3d;
+        }
+
+        /* Gira al pasar el mouse o al hacer clic (ideal para celu) */
+        .flip-card:hover .flip-card-inner,
+        .flip-card.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 18px;
+            padding: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .flip-card-front {
+            background-color: var(--card-front);
+            border: 2px dashed #ffccd5;
+        }
+
+        .flip-card-front h3 {
+            font-size: 1.6rem;
+            color: var(--accent);
+        }
+
+        .flip-card-front p {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-top: 8px;
+        }
+
+        .flip-card-back {
+            background-color: white;
+            transform: rotateY(180deg);
+            justify-content: space-between;
+            padding: 15px 15px 20px;
+        }
+
+        /* Estilo Polaroid dentro de la tarjeta */
+        .polaroid-img {
+            width: 100%;
+            height: 190px;
+            object-fit: cover;
+            object-position: center top;
+            border-radius: 10px;
+            border: 4px solid #fff;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            transform: rotate(-1.5deg);
+        }
+
+        .flip-card-back p {
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+
+        /* --- 4. BOTÓN ALEATORIO --- */
+        .random-section {
+            text-align: center;
+            background: white;
+            padding: 35px 20px;
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.04);
+            margin-bottom: 50px;
+        }
+
+        .btn-big {
+            font-size: 1.15rem;
+            padding: 16px 32px;
+            border-radius: 50px;
+            box-shadow: 0 6px 20px rgba(229, 107, 111, 0.35);
+        }
+
+        #random-quote {
+            margin-top: 22px;
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--accent);
+            min-height: 32px;
+            transition: opacity 0.3s;
+        }
+
+        /* --- 5. SPOTIFY --- */
+        .spotify-section {
+            text-align: center;
+        }
+
+        .spotify-wrapper {
+            max-width: 450px;
+            margin: 15px auto 0;
+        }
+
+        @media (max-width: 500px) {
+            .counter-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. PANTALLA DE INICIO (ACERTIJO) -->
+    <div id="lock-screen">
+        <div class="lock-box">
+            <div class="lock-icon">🔒</div>
+            <h2>Nuestro pequeño archivo</h2>
+            <p style="margin-top: 8px; font-size: 0.95rem; color: var(--text-light);">
+                Para entrar, respondé esto:<br>
+                <strong>¿Dónde fue nuestro primer beso?</strong>
+            </p>
+            <input type="text" id="riddle-input" placeholder="plaza" autocomplete="off">
+            <button class="btn" onclick="checkAnswer()">Desbloquear ❤️ </button>
+            <p id="error-msg">Mmm, casi... probá de nuevo 😉</p>
+        </div>
+    </div>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <div id="main-content">
+        <header>
+            <h1>Nuestro pequeño archivo (Vol. 4)</h1>
+            <p>Un rinconcito nuestro para celebrar estos primeros 4 meses juntos.</p>
+        </header>
+
+        <!-- 2. CONTADOR EN TIEMPO REAL -->
+        <section class="counter-section">
+            <h3>Llevamos juntos:</h3>
+            <div class="counter-grid">
+                <div class="time-box">
+                    <span id="months">4</span>
+                    <small>Meses</small>
+                </div>
+                <div class="time-box">
+                    <span id="days">0</span>
+                    <small>Días</small>
+                </div>
+                <div class="time-box">
+                    <span id="hours">0</span>
+                    <small>Horas</small>
+                </div>
+                <div class="time-box">
+                    <span id="seconds">0</span>
+                    <small>Segundos</small>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. 4 RAZONES POR LAS QUE ME ENCANTÁS -->
+        <h2 class="section-title">4 razones por las que me encantás ✨</h2>
+        <div class="cards-grid">
+            <!-- MES 1 -->
+            <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">
+                        <h3>Mes 1</h3>
+                        <p>(Tocá para dar vuelta)</p>
+                    </div>
+                    <div class="flip-card-back">
+                        <img src="foto1.jpeg" alt="Mes 1" class="polaroid-img">
+                        <p><strong>Tu risa:</strong> Desde el 25 de julio supe que hacerte reír iba a ser mi plan favorito.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MES 2 -->
+            <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">
+                        <h3>Mes 2</h3>
+                        <p>(Tocá para dar vuelta)</p>
+                    </div>
+                    <div class="flip-card-back">
+                        <img src="foto2.jpeg" alt="Mes 2" class="polaroid-img">
+                        <p><strong>Cómo me escuchás:</strong> Amo cómo podemos hablar horas de cualquier cosa sin darnos cuenta.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MES 3 -->
+            <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">
+                        <h3>Mes 3</h3>
+                        <p>(Tocá para dar vuelta)</p>
+                    </div>
+                    <div class="flip-card-back">
+                        <img src="foto3.jpeg" alt="Mes 3" class="polaroid-img">
+                        <p><strong>Tu compañía:</strong> Hasta el plan más simple se vuelve increíble si estás vos al lado.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MES 4 -->
+            <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">
+                        <h3>Mes 4</h3>
+                        <p>(Tocá para dar vuelta)</p>
+                    </div>
+                    <div class="flip-card-back">
+                        <img src="foto4.jpeg" alt="Mes 4" class="polaroid-img">
+                        <p><strong>Lo que construimos:</strong> Cada día me gustás un poquito más que el anterior. ¡Feliz Vol. 4!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. BOTÓN "TOCÁ ACÁ CUANDO..." -->
+        <section class="random-section">
+            <button class="btn btn-big" onclick="showRandomQuote()">Tocá acá cuando me extrañes 💌</button>
+            <p id="random-quote"></p>
+        </section>
+
+       <!-- 5. LA CANCIÓN DE USTEDES -->
+        <section class="spotify-section">
+            <h3>Nuestra canción 🎶</h3>
+            <div class="spotify-wrapper">
+                <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/track/38tfi9dtBQQ5Wyt7EL0G3z?utm_source=generator&si=057e6b621f9d4a78" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+            </div>
+        </section>
+        
+    </div>
+
+    <script>
+        // --- CONFIGURACIÓN PERSONALIZABLE ---
+        // 1. Respuestas válidas para el acertijo (en minúsculas y sin importar tildes)
+        const VALID_ANSWERS = ["plaza", "en la plaza", "el parque"]; 
+
+        // 2. Fecha de inicio: 25 de julio de 2026 (Mes 6 en JS porque enero es 0)
+        const START_DATE = new Date(2026, 6, 25, 0, 0, 0);
+
+        // 3. Frases aleatorias para el botón
+        const QUOTES = [
+            "Vale por unos mates en el parque cuando quieras 🧉",
+            "Acordate de lo hermosa que sos (por dentro y por fuera) ✨",
+            "Mandame un mensaje y voy corriendo a darte un abrazo 🫂",
+            "Vale por una noche de pelis y algo rico para comer 🍕",
+            "Sos mi persona favorita en el mundo ❤️",
+            "Si estás teniendo un día pesado, respirá: acá estoy para vos.",
+            "Vale por un beso gigante apenas nos veamos 😘",
+            "Gracias por estos 4 meses tan lindos juntos."
+        ];
+
+        // --- LÓGICA DEL ACERTIJO ---
+        function normalizeText(text) {
+            return text.toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        }
+
+        function checkAnswer() {
+            const input = normalizeText(document.getElementById("riddle-input").value);
+            const errorMsg = document.getElementById("error-msg");
+
+            if (VALID_ANSWERS.some(ans => input.includes(normalizeText(ans)))) {
+                document.getElementById("lock-screen").classList.add("hidden");
+                document.getElementById("main-content").style.display = "block";
+                confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+            } else {
+                errorMsg.style.display = "block";
+            }
+        }
+
+        // Permitir desbloquear apretando "Enter"
+        document.getElementById("riddle-input").addEventListener("keypress", function(e) {
+            if (e.key === "Enter") checkAnswer();
+        });
+
+        // --- LÓGICA DEL CONTADOR EN TIEMPO REAL ---
+        function updateCounter() {
+            const now = new Date();
+            
+            // Cálculo exacto de meses cumplidos desde el día 25
+            let months = (now.getFullYear() - START_DATE.getFullYear()) * 12 + (now.getMonth() - START_DATE.getMonth());
+            let lastMonthAnniversary = new Date(START_DATE.getFullYear(), START_DATE.getMonth() + months, START_DATE.getDate());
+            
+            if (now < lastMonthAnniversary) {
+                months--;
+                lastMonthAnniversary = new Date(START_DATE.getFullYear(), START_DATE.getMonth() + months, START_DATE.getDate());
+            }
+
+            const diffMs = now - lastMonthAnniversary;
+            const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diffMs / (1000 * 60 * 60)) % 24);
+            const seconds = Math.floor((diffMs / 1000) % 60);
+
+            document.getElementById("months").textContent = months;
+            document.getElementById("days").textContent = days;
+            document.getElementById("hours").textContent = hours;
+            document.getElementById("seconds").textContent = seconds;
+        }
+        setInterval(updateCounter, 1000);
+        updateCounter();
+
+        // --- LÓGICA DE FRASES ALEATORIAS ---
+        let lastIndex = -1;
+        function showRandomQuote() {
+            let randomIndex;
+            do {
+                randomIndex = Math.floor(Math.random() * QUOTES.length);
+            } while (randomIndex === lastIndex);
+            
+            lastIndex = randomIndex;
+            const quoteEl = document.getElementById("random-quote");
+            quoteEl.style.opacity = 0;
+            setTimeout(() => {
+                quoteEl.textContent = QUOTES[randomIndex];
+                quoteEl.style.opacity = 1;
+            }, 150);
+        }
+    </script>
+</body>
+</html>
